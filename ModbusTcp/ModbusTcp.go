@@ -1,6 +1,7 @@
 package ModbusTcp
 
 import (
+	"errors"
 	"gitee.com/sevpinna/gModbus/Comm"
 	"gitee.com/sevpinna/gModbus/Comm/master"
 	"math"
@@ -14,10 +15,12 @@ type ModbusTcp struct {
 	Ip string
 	//是否启用自动重连
 	AutoReConnect bool
+	//超时
+	Timeout int
 }
 
-// Connect 创建TCP链接
-func (m *ModbusTcp) Connect() {
+// Open 创建TCP链接
+func (m *ModbusTcp) Open() {
 	for {
 		conn, err := net.Dial("tcp", m.Ip)
 		if err != nil {
@@ -38,14 +41,32 @@ func (m *ModbusTcp) autoReConnect() {
 			for {
 				conn, err := net.Dial("tcp", m.Ip)
 				if err != nil {
-					time.Sleep(100 * time.Microsecond)
+					time.Sleep(100 * time.Millisecond)
 					continue
 				}
 				m.conn = conn
 			}
 		}
-		time.Sleep(100 * time.Microsecond)
+		time.Sleep(100 * time.Millisecond)
 	}
+}
+
+// 发送并接收网络数据
+func (m *ModbusTcp) sendData(sendBuff []byte) (revBuff []byte, err error) {
+	var n int
+	m.conn.SetDeadline(time.Now().Add(time.Duration(m.Timeout) * time.Millisecond))
+	_, err = m.conn.Write(sendBuff)
+	if err != nil {
+		m.conn = nil
+	}
+
+	revBuff = make([]byte, 256)
+	m.conn.SetDeadline(time.Now().Add(time.Duration(m.Timeout) * time.Millisecond))
+	n, err = m.conn.Read(revBuff)
+	if err != nil {
+		m.conn = nil
+	}
+	return revBuff[:n], err
 }
 
 // ReadCoilStatus 读取线圈状态
@@ -53,17 +74,7 @@ func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Da
 	msg := master.BuildReadCoilStatus(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
-	m.conn.SetDeadline(time.Now().Add(1000 * time.Microsecond))
-	_, err = m.conn.Write(buff)
-	if err != nil {
-		return nil, err
-	}
-	var readBuff = make([]byte, 256)
-	m.conn.SetDeadline(time.Now().Add(1000 * time.Microsecond))
-	_, readErr := m.conn.Read(readBuff)
-	if readErr != nil {
-		return nil, readErr
-	}
+	readBuff, errA := m.sendData(buff)
 	f := readBuff[9 : 9+readBuff[8]]
 
 	Data = make([]bool, Length)
@@ -75,40 +86,90 @@ func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Da
 		}
 
 	}
-	return Data, nil
+	return Data, errA
 }
 
 // ReadInputStatus 读取输入状态
 func (m *ModbusTcp) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
-	return nil, err
+	msg := master.BuildReadCoilStatus(Id, RegisterAddress, Length)
+	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
+	readBuff, errA := m.sendData(buff)
+	f := readBuff[9 : 9+readBuff[8]]
+
+	Data = make([]bool, Length)
+
+	for i := 0; i < int(Length); i++ {
+		j := int(math.Floor(float64(i) / 8))
+		if (f[i/8] & uint8(1<<(i-8*j))) == uint8(1<<(i-8*j)) {
+			Data[i] = true
+		}
+
+	}
+	return Data, errA
 }
 
 // ReadHoldingRegister 读取保持寄存器
 func (m *ModbusTcp) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
-	return nil, err
+	msg := master.BuildReadHoldingRegister(Id, RegisterAddress, Length)
+	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
+
+	readBuff, errA := m.sendData(buff)
+	f := readBuff[9 : 9+readBuff[8]]
+	return f, errA
 }
 
 // ReadInputRegister 读取输入寄存器
 func (m *ModbusTcp) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
-	return nil, err
+	msg := master.BuildReadInputRegister(Id, RegisterAddress, Length)
+	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
+
+	readBuff, errA := m.sendData(buff)
+	f := readBuff[9 : 9+readBuff[8]]
+	return f, errA
 }
 
 // WriteSingleCoilStatus 写单个线圈
 func (m *ModbusTcp) WriteSingleCoilStatus(Id uint8, RegisterAddress uint16, Data bool) (err error) {
-	return err
+	msg := master.BuildWriteSingleCoilStatus(Id, RegisterAddress, Data)
+	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
+	readBuff, errA := m.sendData(buff)
+	if len(readBuff) != len(buff) {
+		return errors.New("error")
+	}
+	return errA
 }
 
 // WriteMultipleCoilStatus 写多个线圈
 func (m *ModbusTcp) WriteMultipleCoilStatus(Id uint8, RegisterAddress uint16, Data []bool) (err error) {
-	return err
+	msg := master.BuildWriteMultipleCoilStatus(Id, RegisterAddress, Data)
+	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
+	readBuff, errA := m.sendData(buff)
+	if len(readBuff) != len(buff) {
+		return errors.New("error")
+	}
+	return errA
 }
 
 // WriteSingleHoldingRegister 写单个保持寄存器
-func (m *ModbusTcp) WriteSingleHoldingRegister(Id uint8, RegisterAddress, Length uint16, Data []byte) (err error) {
-	return err
+func (m *ModbusTcp) WriteSingleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (err error) {
+	msg := master.BuildWriteSingleHoldingRegister(Id, RegisterAddress, Data)
+	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
+
+	readBuff, errA := m.sendData(buff)
+
+	if len(readBuff) != len(buff) {
+		return errors.New("error")
+	}
+	return errA
 }
 
 // WriteMultipleHoldingRegister 写多个保持寄存器
-func (m *ModbusTcp) WriteMultipleHoldingRegister(Id uint8, RegisterAddress, Length uint16, Data []byte) (err error) {
-	return err
+func (m *ModbusTcp) WriteMultipleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (err error) {
+	msg := master.BuildWriteMultipleHoldingRegister(Id, RegisterAddress, Data)
+	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
+	readBuff, errA := m.sendData(buff)
+	if len(readBuff) == len(buff) {
+		return errors.New("error")
+	}
+	return errA
 }

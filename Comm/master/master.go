@@ -44,7 +44,7 @@ func BuildWriteSingleCoilStatus(Id uint8, RegisterAddress uint16, Data bool) (Me
 
 // BuildWriteSingleHoldingRegister 构建写单个保持寄存器报文
 func BuildWriteSingleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (Message []byte) {
-	Message = Comm.BytesCombine([]byte{Id}, []byte{0x06}, Comm.Uint16ToByte(RegisterAddress), []byte{1, 2}, Data)
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x06}, Comm.Uint16ToByte(RegisterAddress), Data)
 	return
 }
 

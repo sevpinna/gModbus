@@ -50,3 +50,38 @@ func (m *ModbusRtu) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Da
 	}
 	return
 }
+
+// ReadInputStatus 读取输入状态
+func (m *ModbusRtu) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
+	return nil, err
+}
+
+// ReadHoldingRegister 读取保持寄存器
+func (m *ModbusRtu) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
+	return nil, err
+}
+
+// ReadInputRegister 读取输入寄存器
+func (m *ModbusRtu) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
+	return nil, err
+}
+
+// WriteSingleCoilStatus 写单个线圈
+func (m *ModbusRtu) WriteSingleCoilStatus(Id uint8, RegisterAddress uint16, Data bool) (err error) {
+	return err
+}
+
+// WriteMultipleCoilStatus 写多个线圈
+func (m *ModbusRtu) WriteMultipleCoilStatus(Id uint8, RegisterAddress uint16, Data []bool) (err error) {
+	return err
+}
+
+// WriteSingleHoldingRegister 写单个保持寄存器
+func (m *ModbusRtu) WriteSingleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (err error) {
+	return err
+}
+
+// WriteMultipleHoldingRegister 写多个保持寄存器
+func (m *ModbusRtu) WriteMultipleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (err error) {
+	return err
+}

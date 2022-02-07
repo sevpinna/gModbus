@@ -6,13 +6,16 @@ import (
 )
 
 func TestQ(t *testing.T) {
-	g := CreateModbusTcpClient("10.254.2.53:502", true)
-	g.Connect()
-	gg, err := g.ReadCoilStatus(1, 0, 9)
+	g := CreateModbusClient("tcp", Option{Ip: "127.0.0.1:502", AutoReconnect: true, Timeout: 1000})
+	//g := CreateModbusTcpClient("10.254.2.53:502", true,1000)
+	g.Open()
+	//gg, err := g.WriteSingleCoilStatus(1, 0, false)
+	err := g.WriteMultipleHoldingRegister(1, 0, []byte{0x00, 0x05, 0xff, 0xff})
 	if err != nil {
+
 		fmt.Println(err)
 	}
-	fmt.Println(gg)
+	fmt.Println("OK")
 	////f := Comm.BuildReadCoilStatus(1, 0, 9)
 	//f2 := master.BuildWriteMultipleHoldingRegister(1, 0, []byte{0, 111})
 	////f2 := Comm.BuildWriteMultipleCoilStatus(1, 0, []bool{false, true, false, true, true, false, true, false, true, true})
