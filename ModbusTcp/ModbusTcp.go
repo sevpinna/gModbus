@@ -54,14 +54,14 @@ func (m *ModbusTcp) autoReConnect() {
 // 发送并接收网络数据
 func (m *ModbusTcp) sendData(sendBuff []byte) (revBuff []byte, err error) {
 	var n int
-	m.conn.SetDeadline(time.Now().Add(time.Duration(m.Timeout) * time.Millisecond))
+	err = m.conn.SetDeadline(time.Now().Add(time.Duration(m.Timeout) * time.Millisecond))
 	_, err = m.conn.Write(sendBuff)
 	if err != nil {
 		m.conn = nil
 	}
 
 	revBuff = make([]byte, 256)
-	m.conn.SetDeadline(time.Now().Add(time.Duration(m.Timeout) * time.Millisecond))
+	err = m.conn.SetDeadline(time.Now().Add(time.Duration(m.Timeout) * time.Millisecond))
 	n, err = m.conn.Read(revBuff)
 	if err != nil {
 		m.conn = nil
