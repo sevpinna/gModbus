@@ -2,8 +2,6 @@ package ModbusRtu
 
 import (
 	"gitee.com/sevpinna/gModbus/Comm"
-	"gitee.com/sevpinna/gModbus/Comm/Master"
-
 	"github.com/tarm/serial"
 	"log"
 	"time"
@@ -29,7 +27,7 @@ func (m *ModbusRtu) Open() {
 
 // ReadCoilStatus 读取线圈状态
 func (m *ModbusRtu) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
-	msg := Master.BuildReadCoilStatus(Id, RegisterAddress, Length)
+	msg := Comm.BuildReadCoilStatus(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine(msg, Comm.CRC16CheckSum(msg))
 
 	_, err = m.s.Write(buff)
