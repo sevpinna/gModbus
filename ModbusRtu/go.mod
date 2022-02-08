@@ -1,4 +1,4 @@
-module ModbusRtu
+module gitee.com/sevpinna/gModbus/ModbusRtu
 
 go 1.17
 

@@ -1,4 +1,4 @@
-module Master
+module gitee.com/sevpinna/gModbus/Comm/Master
 
 go 1.17
 
