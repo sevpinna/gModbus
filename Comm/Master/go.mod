@@ -1,4 +1,4 @@
-module master
+module Master
 
 go 1.17
 
