@@ -72,7 +72,6 @@ func (m *ModbusTcp) sendData(sendBuff []byte) (revBuff []byte, err error) {
 // ReadCoilStatus 读取线圈状态
 func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
 	msg := Master.BuildReadCoilStatus(Id, RegisterAddress, Length)
-	Comm.BuildReadHoldingRegister()
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
 	readBuff, errA := m.sendData(buff)
@@ -92,7 +91,7 @@ func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Da
 
 // ReadInputStatus 读取输入状态
 func (m *ModbusTcp) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
-	msg := Comm.BuildReadCoilStatus(Id, RegisterAddress, Length)
+	msg := Master.BuildReadCoilStatus(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 	readBuff, errA := m.sendData(buff)
 	f := readBuff[9 : 9+readBuff[8]]
@@ -111,7 +110,7 @@ func (m *ModbusTcp) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (D
 
 // ReadHoldingRegister 读取保持寄存器
 func (m *ModbusTcp) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
-	msg := Comm.BuildReadHoldingRegister(Id, RegisterAddress, Length)
+	msg := Master.BuildReadHoldingRegister(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
 	readBuff, errA := m.sendData(buff)
@@ -121,7 +120,7 @@ func (m *ModbusTcp) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16
 
 // ReadInputRegister 读取输入寄存器
 func (m *ModbusTcp) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
-	msg := Comm.BuildReadInputRegister(Id, RegisterAddress, Length)
+	msg := Master.BuildReadInputRegister(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
 	readBuff, errA := m.sendData(buff)
@@ -131,7 +130,7 @@ func (m *ModbusTcp) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) 
 
 // WriteSingleCoilStatus 写单个线圈
 func (m *ModbusTcp) WriteSingleCoilStatus(Id uint8, RegisterAddress uint16, Data bool) (err error) {
-	msg := Comm.BuildWriteSingleCoilStatus(Id, RegisterAddress, Data)
+	msg := Master.BuildWriteSingleCoilStatus(Id, RegisterAddress, Data)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 	readBuff, errA := m.sendData(buff)
 	if len(readBuff) != len(buff) {
@@ -142,7 +141,7 @@ func (m *ModbusTcp) WriteSingleCoilStatus(Id uint8, RegisterAddress uint16, Data
 
 // WriteMultipleCoilStatus 写多个线圈
 func (m *ModbusTcp) WriteMultipleCoilStatus(Id uint8, RegisterAddress uint16, Data []bool) (err error) {
-	msg := Comm.BuildWriteMultipleCoilStatus(Id, RegisterAddress, Data)
+	msg := Master.BuildWriteMultipleCoilStatus(Id, RegisterAddress, Data)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 	readBuff, errA := m.sendData(buff)
 	if len(readBuff) != len(buff) {
@@ -153,7 +152,7 @@ func (m *ModbusTcp) WriteMultipleCoilStatus(Id uint8, RegisterAddress uint16, Da
 
 // WriteSingleHoldingRegister 写单个保持寄存器
 func (m *ModbusTcp) WriteSingleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (err error) {
-	msg := Comm.BuildWriteSingleHoldingRegister(Id, RegisterAddress, Data)
+	msg := Master.BuildWriteSingleHoldingRegister(Id, RegisterAddress, Data)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
 	readBuff, errA := m.sendData(buff)
@@ -166,7 +165,7 @@ func (m *ModbusTcp) WriteSingleHoldingRegister(Id uint8, RegisterAddress uint16,
 
 // WriteMultipleHoldingRegister 写多个保持寄存器
 func (m *ModbusTcp) WriteMultipleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (err error) {
-	msg := Comm.BuildWriteMultipleHoldingRegister(Id, RegisterAddress, Data)
+	msg := Master.BuildWriteMultipleHoldingRegister(Id, RegisterAddress, Data)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 	readBuff, errA := m.sendData(buff)
 	if len(readBuff) == len(buff) {
