@@ -2,11 +2,12 @@ package gModbus
 
 import (
 	"fmt"
+	"gitee.com/sevpinna/gModbus/Comm"
 	"testing"
 )
 
 func TestQ(t *testing.T) {
-	g := CreateModbusClient("tcp", Option{Ip: "127.0.0.1:502", AutoReconnect: true, Timeout: 1000})
+	g := CreateModbusClient("tcp", Comm.Option{Ip: "127.0.0.1:502", AutoReconnect: true, Timeout: 1000})
 	//g := CreateModbusTcpClient("10.254.2.53:502", true,1000)
 	g.Open()
 	//gg, err := g.WriteSingleCoilStatus(1, 0, false)

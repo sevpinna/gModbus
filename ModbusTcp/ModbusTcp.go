@@ -3,6 +3,7 @@ package ModbusTcp
 import (
 	"errors"
 	"gitee.com/sevpinna/gModbus/Comm"
+	"gitee.com/sevpinna/gModbus/Comm/Master"
 	"math"
 	"net"
 	"time"
@@ -70,7 +71,8 @@ func (m *ModbusTcp) sendData(sendBuff []byte) (revBuff []byte, err error) {
 
 // ReadCoilStatus 读取线圈状态
 func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
-	msg := Comm.BuildReadCoilStatus(Id, RegisterAddress, Length)
+	msg := Master.BuildReadCoilStatus(Id, RegisterAddress, Length)
+	Comm.BuildReadHoldingRegister()
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
 	readBuff, errA := m.sendData(buff)

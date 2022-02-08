@@ -1,31 +1,32 @@
-package Comm
+package Master
 
 import (
 	"fmt"
+	"gitee.com/sevpinna/gModbus/Comm"
 	"math"
 )
 
 // BuildReadCoilStatus  构建读取线圈状态报文
 func BuildReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Message []byte) {
-	Message = BytesCombine([]byte{Id}, []byte{0x01}, Uint16ToByte(RegisterAddress), Uint16ToByte(Length))
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x01}, Comm.Uint16ToByte(RegisterAddress), Comm.Uint16ToByte(Length))
 	return
 }
 
 // BuildReadInputStatus 构建读取输入状态报文
 func BuildReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Message []byte) {
-	Message = BytesCombine([]byte{Id}, []byte{0x02}, Uint16ToByte(RegisterAddress), Uint16ToByte(Length))
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x02}, Comm.Uint16ToByte(RegisterAddress), Comm.Uint16ToByte(Length))
 	return
 }
 
 // BuildReadHoldingRegister 构建读取保持寄存器报文
 func BuildReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Message []byte) {
-	Message = BytesCombine([]byte{Id}, []byte{0x03}, Uint16ToByte(RegisterAddress), Uint16ToByte(Length))
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x03}, Comm.Uint16ToByte(RegisterAddress), Comm.Uint16ToByte(Length))
 	return
 }
 
 // BuildReadInputRegister 构建读取输入寄存器报文
 func BuildReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Message []byte) {
-	Message = BytesCombine([]byte{Id}, []byte{0x04}, Uint16ToByte(RegisterAddress), Uint16ToByte(Length))
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x04}, Comm.Uint16ToByte(RegisterAddress), Comm.Uint16ToByte(Length))
 	return
 }
 
@@ -37,13 +38,13 @@ func BuildWriteSingleCoilStatus(Id uint8, RegisterAddress uint16, Data bool) (Me
 	} else {
 		data[0] = 0
 	}
-	Message = BytesCombine([]byte{Id}, []byte{0x05}, Uint16ToByte(RegisterAddress), data)
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x05}, Comm.Uint16ToByte(RegisterAddress), data)
 	return
 }
 
 // BuildWriteSingleHoldingRegister 构建写单个保持寄存器报文
 func BuildWriteSingleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (Message []byte) {
-	Message = BytesCombine([]byte{Id}, []byte{0x06}, Uint16ToByte(RegisterAddress), Data)
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x06}, Comm.Uint16ToByte(RegisterAddress), Data)
 	return
 }
 
@@ -60,12 +61,12 @@ func BuildWriteMultipleCoilStatus(Id uint8, RegisterAddress uint16, Data []bool)
 			}
 		}
 	}
-	Message = BytesCombine([]byte{Id}, []byte{0x0f}, Uint16ToByte(RegisterAddress), Uint16ToByte(uint16(len(Data))), []byte{uint8(lenF)}, data)
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x0f}, Comm.Uint16ToByte(RegisterAddress), Comm.Uint16ToByte(uint16(len(Data))), []byte{uint8(lenF)}, data)
 	return
 }
 
 // BuildWriteMultipleHoldingRegister 构建写多个保持寄存器报文
 func BuildWriteMultipleHoldingRegister(Id uint8, RegisterAddress uint16, Data []byte) (Message []byte) {
-	Message = BytesCombine([]byte{Id}, []byte{0x10}, Uint16ToByte(RegisterAddress), Uint16ToByte(uint16(len(Data)/2)), []byte{uint8(len(Data))}, Data)
+	Message = Comm.BytesCombine([]byte{Id}, []byte{0x10}, Comm.Uint16ToByte(RegisterAddress), Comm.Uint16ToByte(uint16(len(Data)/2)), []byte{uint8(len(Data))}, Data)
 	return
 }
