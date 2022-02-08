@@ -1,5 +1,14 @@
 package Comm
 
+type Option struct {
+	Ip            string
+	AutoReconnect bool
+	Serial        string
+	Baud          int
+	Parity        byte
+	StopBits      byte
+	Timeout       int
+}
 type ModbusMaster interface {
 	Open()
 	// ReadCoilStatus 读取线圈状态

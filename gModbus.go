@@ -8,16 +8,6 @@ import (
 	"time"
 )
 
-type Option struct {
-	Ip            string
-	AutoReconnect bool
-	Serial        string
-	Baud          int
-	Parity        byte
-	StopBits      byte
-	Timeout       int
-}
-
 func CreateModbusTcpClient(ip string, autoReconnect bool, Timeout int) (modbusTcp *ModbusTcp.ModbusTcp) {
 	return &ModbusTcp.ModbusTcp{Ip: ip, AutoReConnect: autoReconnect, Timeout: Timeout}
 }
@@ -25,7 +15,7 @@ func CreateModbusRtuClient(name string, baud int, parity byte, stopBits byte, re
 	return &ModbusRtu.ModbusRtu{Name: name, Baud: baud, Parity: serial.Parity(parity), StopBits: serial.StopBits(stopBits),
 		ReadTimeout: time.Duration(readTimeout) * time.Microsecond}
 }
-func CreateModbusClient(Type string, option Option) (modbus Comm.ModbusMaster) {
+func CreateModbusClient(Type string, option Comm.Option) (modbus Comm.ModbusMaster) {
 	switch Type {
 	case "tcp":
 		modbus = CreateModbusTcpClient(option.Ip, option.AutoReconnect, option.Timeout) //&ModbusTcp.ModbusTcp{Ip: option.Ip, AutoReConnect: option.AutoReconnect}
