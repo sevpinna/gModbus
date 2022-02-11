@@ -70,11 +70,11 @@ func (m *ModbusTcp) sendData(sendBuff []byte) (revBuff []byte, err error) {
 }
 
 // ReadCoilStatus 读取线圈状态
-func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
+func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool) {
 	msg := Master.BuildReadCoilStatus(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
-	readBuff, errA := m.sendData(buff)
+	readBuff, _ := m.sendData(buff)
 	f := readBuff[9 : 9+readBuff[8]]
 
 	Data = make([]bool, Length)
@@ -86,14 +86,14 @@ func (m *ModbusTcp) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Da
 		}
 
 	}
-	return Data, errA
+	return Data
 }
 
 // ReadInputStatus 读取输入状态
-func (m *ModbusTcp) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
+func (m *ModbusTcp) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool) {
 	msg := Master.BuildReadCoilStatus(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
-	readBuff, errA := m.sendData(buff)
+	readBuff, _ := m.sendData(buff)
 	f := readBuff[9 : 9+readBuff[8]]
 
 	Data = make([]bool, Length)
@@ -105,27 +105,27 @@ func (m *ModbusTcp) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (D
 		}
 
 	}
-	return Data, errA
+	return Data
 }
 
 // ReadHoldingRegister 读取保持寄存器
-func (m *ModbusTcp) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
+func (m *ModbusTcp) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte) {
 	msg := Master.BuildReadHoldingRegister(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
-	readBuff, errA := m.sendData(buff)
+	readBuff, _ := m.sendData(buff)
 	f := readBuff[9 : 9+readBuff[8]]
-	return f, errA
+	return f
 }
 
 // ReadInputRegister 读取输入寄存器
-func (m *ModbusTcp) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
+func (m *ModbusTcp) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte) {
 	msg := Master.BuildReadInputRegister(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine([]byte{0x00, 0x00, 0x00, 0x00}, Comm.Uint16ToByte(uint16(len(msg))), msg)
 
-	readBuff, errA := m.sendData(buff)
+	readBuff, _ := m.sendData(buff)
 	f := readBuff[9 : 9+readBuff[8]]
-	return f, errA
+	return f
 }
 
 // WriteSingleCoilStatus 写单个线圈

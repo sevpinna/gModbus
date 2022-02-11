@@ -27,7 +27,8 @@ func (m *ModbusRtu) Open() {
 }
 
 // ReadCoilStatus 读取线圈状态
-func (m *ModbusRtu) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
+func (m *ModbusRtu) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool) {
+	var err error
 	msg := Master.BuildReadCoilStatus(Id, RegisterAddress, Length)
 	buff := Comm.BytesCombine(msg, Comm.CRC16CheckSum(msg))
 
@@ -52,18 +53,18 @@ func (m *ModbusRtu) ReadCoilStatus(Id uint8, RegisterAddress, Length uint16) (Da
 }
 
 // ReadInputStatus 读取输入状态
-func (m *ModbusRtu) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool, err error) {
-	return nil, err
+func (m *ModbusRtu) ReadInputStatus(Id uint8, RegisterAddress, Length uint16) (Data []bool) {
+	return nil
 }
 
 // ReadHoldingRegister 读取保持寄存器
-func (m *ModbusRtu) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
-	return nil, err
+func (m *ModbusRtu) ReadHoldingRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte) {
+	return nil
 }
 
 // ReadInputRegister 读取输入寄存器
-func (m *ModbusRtu) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte, err error) {
-	return nil, err
+func (m *ModbusRtu) ReadInputRegister(Id uint8, RegisterAddress, Length uint16) (Data []byte) {
+	return nil
 }
 
 // WriteSingleCoilStatus 写单个线圈

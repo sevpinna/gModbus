@@ -10,6 +10,7 @@ func TestQ(t *testing.T) {
 	g := CreateModbusClient("tcp", Comm.Option{Ip: "127.0.0.1:502", AutoReconnect: true, Timeout: 1000})
 	//g := CreateModbusTcpClient("10.254.2.53:502", true,1000)
 	g.Open()
+	//h:=g.ReadCoilStatus(1,0,1)
 	//gg, err := g.WriteSingleCoilStatus(1, 0, false)
 	err := g.WriteMultipleHoldingRegister(1, 0, []byte{0x00, 0x05, 0xff, 0xff})
 	if err != nil {
